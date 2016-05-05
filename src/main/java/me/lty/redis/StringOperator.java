@@ -1,51 +1,47 @@
 package me.lty.redis;
 
-import redis.clients.jedis.Jedis;
-
 import java.util.List;
-import java.util.Random;
-import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import redis.clients.jedis.Jedis;
 
 public class StringOperator {
 	
 	private static Logger log =LoggerFactory.getLogger(StringOperator.class);
 
-    public static String get(String key,RedisExecPool pool){
-        Jedis jedis = pool.getJedis();
+    public static String get(String key,Jedis jedis){
         String value = jedis.get(key);
-        pool.returnJedis(jedis);
         return value;
     }
 
-    public static long setNotExists(RedisExecPool pool,String key,String value){
-        Jedis jedis = pool.getJedis();
+    public static long setNotExists(Jedis jedis,String key,String value){
         long status = jedis.setnx(key,value);
-        pool.returnJedis(jedis);
         return status;
     }
 
-    public static String set(RedisExecPool pool,String key,String value){
-        Jedis jedis = pool.getJedis();
+    public static String set(Jedis jedis,String key,String value){
          key=key+System.currentTimeMillis();
         String status = jedis.set(key,value); //保证key 不一样System.currentTimeMillis()
-        pool.returnJedis(jedis);
         return status;
     }
 
-    public static String set(RedisExecPool pool,String... keysValues){
-        Jedis jedis = pool.getJedis();
+    public static String set(Jedis jedis,String... keysValues){
         String status = jedis.mset(keysValues);
-        pool.returnJedis(jedis);
         return status;
     }
 
-    public static List<String> get(RedisExecPool pool,String... keys){
-        Jedis jedis = pool.getJedis();
+    public static List<String> get(Jedis jedis,String... keys){
         List<String> result = jedis.mget(keys);
-        pool.returnJedis(jedis);
         return result;
     }
+    
+    public static void hh(String... keys){
+    	System.out.println(keys.length);
+    }
+    
+    public static void main(String[] args) {
+		hh("asfd","asd");
+	}
 }

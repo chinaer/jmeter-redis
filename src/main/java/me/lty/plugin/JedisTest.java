@@ -1,18 +1,18 @@
 package me.lty.plugin;
 
-import me.lty.redis.RedisExecPool;
 import me.lty.redis.StringOperator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import redis.clients.jedis.Jedis;
 
 public class JedisTest {
 	private static Logger log=LoggerFactory.getLogger(JedisTest.class);
 
 	public static void main(String[] args) {
 		
-		RedisExecPool pool = RedisExecPool.getInstance("192.168.1.154",19000,
-				null);
+		Jedis pool = new Jedis("192.168.1.154",19000);
 		for(int i=0;i<100;i++){
 			StringOperator.set(pool, "ge11","ge123");
 		}

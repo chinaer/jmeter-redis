@@ -1,7 +1,18 @@
 package me.lty.plugin;
 
+import java.awt.BorderLayout;
+
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+
 import me.lty.redis.Data;
-import me.lty.redis.RedisExecPool;
 
 import org.apache.jmeter.gui.util.VerticalPanel;
 import org.slf4j.Logger;
@@ -9,10 +20,6 @@ import org.slf4j.LoggerFactory;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.exceptions.JedisConnectionException;
-
-import javax.swing.*;
-
-import java.awt.*;
 
 public class RedisGui extends JPanel {
 
@@ -103,70 +110,53 @@ public class RedisGui extends JPanel {
             String type = (String) typeBox.getSelectedItem();
             operatorBox.setModel(new DefaultComboBoxModel(Data.TYPE_OPERATOR.get(type).toArray()));
             switch (type){
-                case "Key":
-                    valuePanel.setVisible(false);
-                    secondsPanel.setVisible(true);
-                    fieldPanel.setVisible(false);
-                    indexPanel.setVisible(false);
-                    break;
                 case "String":
                     valuePanel.setVisible(true);
                     secondsPanel.setVisible(false);
                     fieldPanel.setVisible(false);
                     indexPanel.setVisible(false);
                     break;
-                case "Hash":
-                    valuePanel.setVisible(true);
-                    fieldPanel.setVisible(true);
-                    secondsPanel.setVisible(false);
-                    indexPanel.setVisible(false);
-                    break;
-                case "List":
-                    valuePanel.setVisible(true);
-                    indexPanel.setVisible(true);
-                    secondsPanel.setVisible(false);
-                    fieldPanel.setVisible(false);
-                    break;
-                case "Set":
-                    valuePanel.setVisible(true);
-                    indexPanel.setVisible(false);
-                    secondsPanel.setVisible(false);
-                    fieldPanel.setVisible(false);
-                    break;
             }
         });
     }
 
     private void initButton() {
-        connection = new JButton();
-        connection.setText("Connection");
-        connection.addActionListener(e -> {
-            String url = urlText.getText().trim();
-            if("".equals(url)){
-                JOptionPane.showMessageDialog(null,"Redis IP is null","error",JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            String port = portText.getText().trim();
-            if ("".equals(port)){
-                JOptionPane.showMessageDialog(null,"port is empty","error",JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            try{
-                int p = Integer.valueOf(port);
-                RedisExecPool newPool = RedisExecPool.getInstance(url,p,new String(passwordText.getPassword()));
-                Jedis jedis = newPool.getJedis();  //Connection;
-                log.info("connected");
-                newPool.returnJedis(jedis);
-                JOptionPane.showMessageDialog(null,"connected","notice",JOptionPane.INFORMATION_MESSAGE);
-            }catch (NumberFormatException ex){
-                ex.printStackTrace();
-                JOptionPane.showMessageDialog(null,"port is wrong","错误",JOptionPane.ERROR_MESSAGE);
-            }catch (JedisConnectionException e1){
-                e1.printStackTrace();
-                JOptionPane.showMessageDialog(null,"connect error ,please check.","错误",JOptionPane.ERROR_MESSAGE);
-            }
-        });
-    }
+		connection = new JButton();
+		connection.setText("Connection");
+		connection.addActionListener(e -> {
+			String url = urlText.getText().trim();
+			if ("".equals(url)) {
+				JOptionPane.showMessageDialog(null, "Redis IP is null",
+						"error", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			String port = portText.getText().trim();
+			if ("".equals(port)) {
+				JOptionPane.showMessageDialog(null, "port is empty", "error",
+						JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			try {
+				int p = Integer.valueOf(port);
+				Jedis jedis = new Jedis(url, p);
+				log.info("connected");
+				jedis.close();
+				JOptionPane.showMessageDialog(null, "connected", "notice",
+						JOptionPane.INFORMATION_MESSAGE);
+			} catch (NumberFormatException ex) {
+				ex.printStackTrace();
+				JOptionPane.showMessageDialog(null, "port is wrong", "错误",
+						JOptionPane.ERROR_MESSAGE);
+			} catch (JedisConnectionException e1) {
+				e1.printStackTrace();
+				JOptionPane.showMessageDialog(null,
+						"connect error ,please check.", "错误",
+						JOptionPane.ERROR_MESSAGE);
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		});
+	}
 
     private JPanel createTextAreaPanel(JTextArea jTextArea,String name){
         JLabel label = new JLabel(name);

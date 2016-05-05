@@ -42,8 +42,8 @@ public class RedisSamplerGui extends AbstractSamplerGui implements ItemListener{
         super.configureTestElement(testElement);
         if(testElement instanceof  RedisSamplerBase){
             RedisSamplerBase base = (RedisSamplerBase) testElement;
-            base.setIp(redisGui.urlText.getText().trim());
-            base.setPassword(new String(redisGui.passwordText.getPassword()));
+            base.setIp(redisGui.urlText.getText().trim());    //get id
+            base.setPassword(new String(redisGui.passwordText.getPassword()));  //get psd
             if(redisGui.seconds.getText().trim().equals("")){
 
             }else{
@@ -53,7 +53,7 @@ public class RedisSamplerGui extends AbstractSamplerGui implements ItemListener{
             if(redisGui.portText.getText().trim().equals("")){
 
             }else{
-                int port = Integer.valueOf(redisGui.portText.getText().trim());
+                int port = Integer.valueOf(redisGui.portText.getText().trim());  //get port
                 base.setPort(port);
             }
             base.setKey(redisGui.keyText.getText().trim());
